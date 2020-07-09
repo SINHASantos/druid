@@ -14,24 +14,12 @@
 
 //! Platform specific implementations.
 
-cfg_if::cfg_if! {
-    if #[cfg(target_os = "windows")] {
-        mod windows;
-        pub use windows::*;
-    } else if #[cfg(target_os = "macos")] {
-        mod mac;
-        pub use mac::*;
-        pub(crate) mod shared;
-    } else if #[cfg(all(feature = "x11", target_os = "linux"))] {
-        mod x11;
-        pub use x11::*;
-        pub(crate) mod shared;
-    } else if #[cfg(target_os = "linux")] {
-        mod gtk;
-        pub use self::gtk::*;
-        pub(crate) mod shared;
-    } else if #[cfg(target_arch = "wasm32")] {
-        mod web;
-        pub use web::*;
-    }
-}
+#[cfg_attr(target_os = "windows", path = "windows/mod.rs")]
+#[cfg_attr(target_os = "macos", path = "mac/mod.rs")]
+#[cfg_attr(all(target_os = "linux", feature = "x11"), path = "x11/mod.rs")]
+#[cfg_attr(all(target_os = "linux", not(feature = "x11")), path = "gtk/mod.rs")]
+#[cfg_attr(target_arch = "wasm32", path = "wasm32/mod.rs")]
+mod platform_impl;
+pub use platform_impl::*;
+
+pub(crate) mod shared;

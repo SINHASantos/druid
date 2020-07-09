@@ -14,9 +14,7 @@
 
 //! Logic that is shared by more than one platform.
 
-cfg_if::cfg_if! {
-    if #[cfg(any(target_os = "macos", target_os = "linux"))] {
-        mod keyboard;
-        pub use keyboard::*;
-    }
-}
+#[cfg(any(target_os = "macos", target_os = "linux"))]
+mod keyboard;
+#[cfg(any(target_os = "macos", target_os = "linux"))]
+pub use keyboard::*;
